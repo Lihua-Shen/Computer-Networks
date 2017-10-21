@@ -176,3 +176,28 @@ void sr_print_routing_entry(struct sr_rt* entry)
     printf("%s\n",entry->interface);
 
 } /* -- sr_print_routing_entry -- */
+
+/*---------------------------------------------------------------------
+ * Method:
+ *
+ *---------------------------------------------------------------------*/
+
+struct sr_rt *longest_prefix_match(struct sr_instance* sr, uint32_t ip_dst)
+{
+    struct sr_rt * routing_table = sr->routing_table;
+    int len = 0; 
+    struct sr_rt* rt_walker = 0;
+    struct sr_rt* longest_prefix = 0;
+    rt_walker = routing_table;
+    while (rt_walker) {
+        /* Compare the bitwise AND of target and the subnet mask with the bitwise AND of routing table entry and the subnet mask */
+        if ((ip_dst & rt_walker->mask.s_addr) == (rt_walker->dest.s_addr & rt_walker->mask.s_addr)) {
+            if ((ip_dst & rt_walker->mask.s_addr) > len){
+                len = ip_dst & rt_walker->mask.s_addr;
+                longest_prefix = rt_walker;
+            }
+        }
+        rt_walker = rt_walker->next; 
+    }
+    return longest_prefix;
+} /* -- longest_prefix_match -- */

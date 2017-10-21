@@ -29,6 +29,8 @@
 #define SR_UTILS_H
 
 uint16_t cksum(const void *_data, int len);
+int validate_ip_checksum(sr_ip_hdr_t *ip_hdr);
+int validate_icmp_checksum(sr_icmp_hdr_t *icmp_hdr, int type, int len);
 
 uint16_t ethertype(uint8_t *buf);
 uint8_t ip_protocol(uint8_t *buf);

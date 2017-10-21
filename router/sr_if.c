@@ -55,6 +55,55 @@ struct sr_if* sr_get_interface(struct sr_instance* sr, const char* name)
 } /* -- sr_get_interface -- */
 
 /*--------------------------------------------------------------------- 
+ * Method: sr_get_interface_given_ip
+ * Scope: Global
+ *
+ * Given an interface ip address return the interface record or 0 if it
+ * doesn't exist.
+ *
+ *---------------------------------------------------------------------*/
+
+struct sr_if* sr_get_interface_given_ip(struct sr_instance* sr, uint32_t ip)
+{
+    struct sr_if* if_walker = 0;
+
+    /* -- REQUIRES -- */
+    assert(ip);
+    assert(sr);
+
+    if_walker = sr->if_list;
+
+    while(if_walker)
+    {
+       if(if_walker->ip == ip)
+        { return if_walker; }
+        if_walker = if_walker->next;
+    }
+
+    return 0;
+} /* -- sr_get_interface_given_ip -- */
+
+/* Custom: get interface with specified MAC address */
+struct sr_if *sr_get_interface_addr(struct sr_instance *sr, unsigned char *addr)
+{
+    assert(addr);
+    assert(sr);
+
+    struct sr_if *intf = sr->if_list;
+    while (intf)
+    {
+        if (memcmp(intf->addr, addr, ETHER_ADDR_LEN) == 0)
+        {
+            return intf;
+        }
+
+        intf = intf->next;
+    }
+
+    return 0;
+}
+
+/*--------------------------------------------------------------------- 
  * Method: sr_add_interface(..)
  * Scope: Global
  *

@@ -101,8 +101,22 @@ struct sr_icmp_t3_hdr {
 } __attribute__ ((packed)) ;
 typedef struct sr_icmp_t3_hdr sr_icmp_t3_hdr_t;
 
+/* Custom: ICMP message types */
+enum icmp_type
+{
+    icmp_echo_reply = 0,
+    icmp_dest_unreachable = 3,
+    icmp_echo_request = 8,
+    icmp_time_exceeded = 11,
+};
 
-
+enum icmp_dest_unreachable_code
+{
+    icmp_dest_net_unreachable = 0,
+    icmp_dest_host_unreachable = 1,
+    icmp_port_unreachable = 3,
+    icmp_dest_unreachable_frag_but_dont_frag_set = 4,
+};
 
 /*
  * Structure of an internet header, naked of options.
@@ -152,6 +166,8 @@ typedef struct sr_ethernet_hdr sr_ethernet_hdr_t;
 
 enum sr_ip_protocol {
   ip_protocol_icmp = 0x0001,
+  ip_protocol_tcp = 0x0006,
+  ip_protocol_udp = 0x0011,
 };
 
 enum sr_ethertype {
@@ -185,5 +201,10 @@ struct sr_arp_hdr
 typedef struct sr_arp_hdr sr_arp_hdr_t;
 
 #define sr_IFACE_NAMELEN 32
+#define ETH_HDR 0
+#define ARP_PACKET 1
+#define IP_PACKET 2
+#define ICMP_PACKET 3
+#define ICMP_TYPE3_PACKET 4
 
 #endif /* -- SR_PROTOCOL_H -- */

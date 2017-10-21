@@ -19,6 +19,30 @@ uint16_t cksum (const void *_data, int len) {
   return sum ? sum : 0xffff;
 }
 
+/* Validate IP Checksum */
+int validate_ip_checksum(sr_ip_hdr_t *ip_hdr) {
+    uint16_t old_cksum = ip_hdr->ip_sum;
+    memset(&(ip_hdr->ip_sum), 0, sizeof(uint16_t));
+    uint16_t new_cksum = cksum(ip_hdr, sizeof(sr_ip_hdr_t));
+    if (old_cksum != new_cksum){
+        return 1;
+    }
+    return 0; 
+}
+
+/* Validate ICMP Checksum */
+int validate_icmp_checksum(sr_icmp_hdr_t *icmp_hdr, int type, int len) {
+    if (type == ICMP_PACKET) {
+        uint16_t old_cksum = icmp_hdr->icmp_sum;
+        memset(&(icmp_hdr->icmp_sum), 0, sizeof(uint16_t));
+        uint16_t new_cksum = cksum(icmp_hdr, len - sizeof(sr_ethernet_hdr_t) - sizeof(sr_ip_hdr_t));
+        if(old_cksum != new_cksum) {
+            return 1;
+        }
+        icmp_hdr->icmp_sum = new_cksum;
+    } 
+    return 0; 
+}
 
 uint16_t ethertype(uint8_t *buf) {
   sr_ethernet_hdr_t *ehdr = (sr_ethernet_hdr_t *)buf;
